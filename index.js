@@ -28,6 +28,7 @@ async function run() {
     await client.connect();
 
     const toysCollection = client.db("toysDB").collection("toys");
+    const userCollection = client.db("userDB").collection("users");
 
     //toys Get
     app.get("/toys", async (req, res) => {
@@ -45,12 +46,37 @@ async function run() {
       res.send(result);
     });
 
-    // toy get
+    // toy id get
 
     app.get("/toys/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await toysCollection.findOne(query);
+      res.send(result);
+    });
+
+    // toys brand get
+
+    app.get("/toysBrand/:id", async (req, res) => {
+      const brandName = req.params.id;
+      const result = await toysCollection.find({ brand: brandName }).toArray();
+
+      res.send(result);
+    });
+    // user post
+
+    app.post("/user", async (req, res) => {
+      const user = req.body;
+      console.log(user);
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    });
+
+    //users get
+
+    app.get("/user", async (req, res) => {
+      const cursor = userCollection.find();
+      const result = await cursor.toArray();
       res.send(result);
     });
 
