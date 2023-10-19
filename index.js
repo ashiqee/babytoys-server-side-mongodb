@@ -29,7 +29,7 @@ async function run() {
 
     const toysCollection = client.db("toysDB").collection("toys");
     const userCollection = client.db("userDB").collection("users");
-
+    const cartCollection = client.db("cartDB").collection("carts");
     //toys Get
     app.get("/toys", async (req, res) => {
       const cursor = toysCollection.find();
@@ -77,6 +77,15 @@ async function run() {
     app.get("/user", async (req, res) => {
       const cursor = userCollection.find();
       const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // user cart post
+
+    app.post("/cart", async (req, res) => {
+      const cartProduct = req.body;
+      console.log(cartProduct);
+      const result = await cartCollection.insertOne(cartProduct);
       res.send(result);
     });
 
