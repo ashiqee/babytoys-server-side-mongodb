@@ -30,6 +30,7 @@ async function run() {
     const toysCollection = client.db("toysDB").collection("toys");
     const userCollection = client.db("userDB").collection("users");
     const cartCollection = client.db("cartDB").collection("carts");
+    const brandCollection = client.db("brandDB").collection("brands");
     //toys Get
     app.get("/toys", async (req, res) => {
       const cursor = toysCollection.find();
@@ -43,6 +44,28 @@ async function run() {
       const newToy = req.body;
       console.log(newToy);
       const result = await toysCollection.insertOne(newToy);
+      res.send(result);
+    });
+
+    //Toys Update
+
+    app.put("/toys/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateToys = req.body;
+      const toy = {
+        $set: {
+          productImage: updateToys.productImage,
+          productName: updateToys.productName,
+          brand: updateToys.brand,
+          price: updateToys.price,
+          category: updateToys.category,
+          rating: updateToys.rating,
+          description: updateToys.description,
+        },
+      };
+      const result = await toysCollection.updateOne(filter, toy, options);
       res.send(result);
     });
 
@@ -63,6 +86,31 @@ async function run() {
 
       res.send(result);
     });
+    app.get("/brand/:id", async (req, res) => {
+      const brandName = req.params.id;
+      const result = await brandCollection
+        .find({ brandName: brandName })
+        .toArray();
+
+      res.send(result);
+    });
+
+    //brand post
+    app.post("/brand", async (req, res) => {
+      const brand = req.body;
+      console.log(brand);
+      const result = await brandCollection.insertOne(brand);
+      res.send(result);
+    });
+
+    //Brand Get
+
+    app.get("/brand", async (req, res) => {
+      const cursor = brandCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // user post
 
     app.post("/user", async (req, res) => {
@@ -86,6 +134,24 @@ async function run() {
       const cartProduct = req.body;
       console.log(cartProduct);
       const result = await cartCollection.insertOne(cartProduct);
+
+      res.send(result);
+    });
+
+    // user cart get
+
+    app.get("/cart/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await cartCollection.find({ userId: id }).toArray();
+
+      res.send(result);
+    });
+
+    app.delete("/cart/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: id };
+      const result = await cartCollection.deleteOne(query);
+      console.log(result);
       res.send(result);
     });
 
@@ -100,6 +166,14 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+app.use((err, req, res, next) => {
+  if (err.message) {
+    res.status(500).send(err.message);
+  } else {
+    res.send("This Already Added");
+  }
+});
 
 app.get("/", (req, res) => {
   res.send("Baby Toys Server is Running");
