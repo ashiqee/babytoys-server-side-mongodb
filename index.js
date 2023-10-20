@@ -42,7 +42,7 @@ async function run() {
 
     app.post("/toys", async (req, res) => {
       const newToy = req.body;
-      console.log(newToy);
+
       const result = await toysCollection.insertOne(newToy);
       res.send(result);
     });
@@ -98,7 +98,7 @@ async function run() {
     //brand post
     app.post("/brand", async (req, res) => {
       const brand = req.body;
-      console.log(brand);
+
       const result = await brandCollection.insertOne(brand);
       res.send(result);
     });
@@ -115,7 +115,7 @@ async function run() {
 
     app.post("/user", async (req, res) => {
       const user = req.body;
-      console.log(user);
+
       const result = await userCollection.insertOne(user);
       res.send(result);
     });
@@ -132,7 +132,7 @@ async function run() {
 
     app.post("/cart", async (req, res) => {
       const cartProduct = req.body;
-      console.log(cartProduct);
+
       const result = await cartCollection.insertOne(cartProduct);
 
       res.send(result);
@@ -151,7 +151,7 @@ async function run() {
       const id = req.params.id;
       const query = { _id: id };
       const result = await cartCollection.deleteOne(query);
-      console.log(result);
+
       res.send(result);
     });
 
